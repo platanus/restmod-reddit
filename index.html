@@ -22,6 +22,12 @@
       <li ng-repeat="hottie in hot">
         <h1>{{hottie.title}}</h1>
         <p>{{hottie.selftext}}</p>
+        <a ng-click="hottie.comments.$fetch()">Get Comments</a>
+        <ul>
+          <li ng-repeat="comment in hottie.comments">
+            {{ comment.body }}
+          </li>
+        </ul>
       </li>
     </ul>
   </body>

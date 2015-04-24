@@ -10,10 +10,22 @@ angular.module('reddit', ['restmod'])
 	return restmod.mixin({
 		$extend: {
 			'Model.unpack': function(_resource, _raw) {
-				if(_raw.kind == 'Listing') {
-					return _raw.data.children.map(function(child) {
-						return child.data;
+				if(!angular.isArray(_raw)) _raw = [_raw];
+
+				if(_resource.$isCollection) {
+					var raw = [];
+					angular.forEach(_raw, function(_item) {
+						if(_item.kind == 'Listing') {
+							angular.forEach(_item.data.children, function(child) {
+								if(!_resource.$type.getProperty('redditType') || child.kind == _resource.$type.getProperty('redditType')) {
+									raw.push(child.data);
+								}
+							});
+						} else {
+							throw 'not implemented';
+						}
 					});
+					return raw;
 				} else {
 					throw 'not implemented';
 				}
@@ -24,8 +36,18 @@ angular.module('reddit', ['restmod'])
 		}
 	});
 })
-.factory('Item', function(restmod) {
+.factory('Item', function(restmod,RMUtils) {
 	return restmod.model().mix({
+		comments: {
+			hasMany: 'Comment',
+			hooks: {
+				'after-has-many-init': function() {
+					this.$scope.$urlFor = function(_resource) {
+						return RMUtils.joinUrl(this.$target.$url(), this.$scope.id);
+					};
+				}
+			}
+		},
 		$hook: {
 			'after-feed': function() {
 				if(this.is_self) {
@@ -34,6 +56,13 @@ angular.module('reddit', ['restmod'])
 					this.selftext = this.url;
 				}
 			}
+		}
+	});
+})
+.factory('Comment', function(restmod) {
+	return restmod.model('/r/comments', {
+		$config: {
+			redditType: 't1'
 		}
 	});
 })
