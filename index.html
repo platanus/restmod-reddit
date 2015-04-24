@@ -18,6 +18,11 @@
   </head>
 
   <body>
-    {{ hot.$encode() }}
+    <ul>
+      <li ng-repeat="hottie in hot">
+        <h1>{{hottie.title}}</h1>
+        <p>{{hottie.selftext}}</p>
+      </li>
+    </ul>
   </body>
 </html>

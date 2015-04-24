@@ -11,7 +11,9 @@ angular.module('reddit', ['restmod'])
 		$extend: {
 			'Model.unpack': function(_resource, _raw) {
 				if(_raw.kind == 'Listing') {
-					return _raw.data.children;
+					return _raw.data.children.map(function(child) {
+						return child.data;
+					});
 				} else {
 					throw 'not implemented';
 				}
@@ -23,7 +25,17 @@ angular.module('reddit', ['restmod'])
 	});
 })
 .factory('Item', function(restmod) {
-    return restmod.model();
+	return restmod.model().mix({
+		$hook: {
+			'after-feed': function() {
+				if(this.is_self) {
+					this.selftext = this.selftext;
+				} else {
+					this.selftext = this.url;
+				}
+			}
+		}
+	});
 })
 .factory('RedditRoot', function(restmod) {
 	return restmod.model().mix({
