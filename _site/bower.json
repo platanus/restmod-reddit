@@ -1,0 +1,9 @@
+{
+  "name": "restmod-reddit",
+  "version": "0.0.1",
+  "homepage": "https://github.com/platanus/restmod-reddit",
+  "authors": [
+    "Agustin Feuerhake <agustin@platan.us>"
+  ],
+  "license": "MIT"
+}
