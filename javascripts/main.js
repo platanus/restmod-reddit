@@ -2,8 +2,8 @@ angular.module('reddit', ['restmod'])
 .config(function(restmodProvider) {
 	restmodProvider.rebase('BaseModel');
 })
-.run(function($rootScope) {
-
+.run(function($rootScope, RedditRoot) {
+	$rootScope.hot = RedditRoot.hot.$fetch();
 })
 
 .factory('BaseModel', function(restmod) {
@@ -16,6 +16,9 @@ angular.module('reddit', ['restmod'])
 					throw 'not implemented';
 				}
 			}
+		},
+		$config: {
+			urlPrefix: 'http://api.reddit.com'
 		}
 	});
 })
@@ -25,7 +28,7 @@ angular.module('reddit', ['restmod'])
 .factory('RedditRoot', function(restmod) {
 	return restmod.model().mix({
 		hot: {
-			has_many: 'Item'
+			hasMany: 'Item'
 		}
 	}).single('/');
 });
